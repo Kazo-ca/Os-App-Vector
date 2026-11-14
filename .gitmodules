@@ -5,5 +5,5 @@
 [submodule "external/vectorcraft"]
 	path = external/vectorcraft
 	url = https://github.com/Kazo-ca/vectorcraft.git
-	branch = kazo/v0.24.1
+	branch = kazo/base
 	shallow = true

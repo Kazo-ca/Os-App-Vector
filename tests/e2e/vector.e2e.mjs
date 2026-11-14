@@ -1,10 +1,8 @@
 // End-to-end runs of the Kazo Vector window inside the Kazo OS host (doc/en/plan.md, work item 2):
 // `npm run test:e2e` after `dotnet build Kazo.Vector.slnx -c Debug`. Each test opens a fresh page.
 //
-// The window shows VectorCraft once VectorCraft says "ready" (vectorcraft:ready), which only the
-// host mode of our fork sends (fork work item F1). The VectorCraft build is 0.24.1 as released
-// (kazo/v0.24.1) until then: the test that waits for "ready" is marked todo, it runs and reports
-// without failing the suite.
+// The window shows VectorCraft once VectorCraft says "ready" (vectorcraft:ready), which the host
+// mode of our fork sends (fork work item F1, kazo/base).
 import { after, before, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { openApp, runInTerminal, startHost } from './host.mjs';
@@ -71,7 +69,7 @@ test('two Kazo Vector windows run their own VectorCraft at the same time', { tim
     await page.close();
 });
 
-test('the window shows VectorCraft once it is ready', { timeout: 300_000, todo: 'needs the host mode of the fork (F1): vectorcraft:ready' }, async () => {
+test('the window shows VectorCraft once it is ready', { timeout: 300_000 }, async () => {
     const { page, errors } = await bootPage(browser, host.baseUrl);
 
     await openApp(page, 'Kazo Vector');
