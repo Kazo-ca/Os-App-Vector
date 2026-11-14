@@ -138,7 +138,7 @@ qu'il lui faut.
 | H7 | ★ `ui.inspect` donne pour chaque document `id` (son `uid`), `path` et `active`, en plus de `title` et `dirty` : la forme de WordCraft, que `OpenDocument.ListFrom` du module lit déjà. | Lier chaque onglet à son fichier sans se fier à la place de l'onglet ni au titre. |
 | H8 | Hors mode hébergé, rien ne change (téléchargements, sélecteur du navigateur, `openFile`, `captureDownloads`). | Le patch reste proposable en amont. |
 | H9 | En mode hébergé : pas de bouton « Discord » (barre du haut, accueil, À propos), pas de liens vers ArtCraft sur l'accueil ; À propos nomme le projet en texte simple, sans « Fait partie d'ArtCraft » ; l'icône du dragon est vérifiée contre sa licence (`assets/app-icon/LICENSE.txt`, `docs/brand/`) et retirée de l'interface si c'est une marque. | Build modifié. |
-| H10 | Selon Q3 : en mode hébergé, la récupération de données n'écrit pas dans `localStorage`. | Le stockage du navigateur est partagé entre les utilisateurs Kazo et avec l'OS. |
+| H10 | En mode hébergé (Q3 = A), la récupération de données n'écrit pas dans `localStorage`. | Le stockage du navigateur est partagé entre les utilisateurs Kazo et avec l'OS. |
 
 Tests demandés dans le fork : tests unitaires des règles pures (`saveAs`, confirmation, limite de
 taille, forme de `ui.inspect`), `cargo fmt --check`, `cargo clippy -D warnings`,
@@ -170,7 +170,19 @@ d'essai qui joue l'hôte (`open`, `save`, `saved`, `dirty`, `failed`, copie tél
 
 ## Questions posées à Benoit
 
-Posées dans le fil le 2026-11-14. Les réponses seront notées ici.
+Posées dans le fil le 2026-11-14. **Benoit a répondu A aux trois le même jour** :
+
+- **Q1 = A** : build compilé avec les réglages de taille et gardé dans le dépôt ; le script échoue
+  au-delà de 90 Mio.
+- **Q2 = A** : app par défaut pour les formats vectoriels que rien d'autre n'ouvre, « Ouvrir avec »
+  pour `.pdf` et `.afdesign`, rien pour les images.
+- **Q3 = A** : récupération de données coupée dans la v1 (H10), avec une issue `TODO` pour la
+  refaire plus tard dans le dossier privé de l'utilisateur :
+  [#4](https://github.com/Kazo-ca/Os-App-Vector/issues/4). Benoit a demandé la même issue pour
+  Kazo Photo ([Os-App-Photo#11](https://github.com/Kazo-ca/Os-App-Photo/issues/11)) et Kazo Fig
+  ([Os-App-Fig#9](https://github.com/Kazo-ca/Os-App-Fig/issues/9)).
+
+Les questions telles qu'elles ont été posées :
 
 **Q1. Où vit le build de VectorCraft ?** Kazo Photo garde son build dans le dépôt (39 Mo) parce
 que le Store ne compile pas de Rust. Ici le `.wasm` officiel pèse 102 Mo, à 2,4 % de la limite de
@@ -232,8 +244,8 @@ chantier. Benoit fusionne `vector/base` dans `main` ; `main` du fork reste la co
 | N° | Dépôt, branche (vers) | Contenu | Dépend de |
 | --- | --- | --- | --- |
 | 1 | Os-App-Vector, `vector/1-plan` (`vector/base`) | ce plan (fr et en) | — |
-| F1 | vectorcraft, `kazo/1-web-host` (`kazo/base`) | H1 à H10 : mode hébergé | plan fusionné, Q3 |
-| 2 | Os-App-Vector, `vector/2-solution` (`vector/base`) | solution, manifeste, compilation depuis le fork, page d'iframe, fenêtre qui démarre | plan fusionné, Q1, Q2 ; « terminé » attend F1 |
+| F1 | vectorcraft, `kazo/1-web-host` (`kazo/base`) | H1 à H10 : mode hébergé | plan fusionné |
+| 2 | Os-App-Vector, `vector/2-solution` (`vector/base`) | solution, manifeste, compilation depuis le fork, page d'iframe, fenêtre qui démarre | plan fusionné ; « terminé » attend F1 |
 | 3 | Os-App-Vector, `vector/3-window` (`vector/base`) | ouvrir, enregistrer, onglets, exports, garde de fermeture, sélecteur, raccourcis, thème, langue | 2 et F1 |
 | 4 | Os-App-Vector, `vector/4-store` (`vector/base`) | fiche, README, licences, mesures, tag, catalogue, `features.md` | 3 |
 
@@ -245,15 +257,15 @@ Kazo OS 3.3.4 est publié : le chantier 4 n'attend aucune version de l'OS.
 - Créer `kazo/v0.24.1` sur le commit amont `f4922aa7` (`git fetch https://github.com/storytold/vectorcraft refs/tags/v0.24.1`), puis `kazo/base` de cette branche.
 - `apps/vectorcraft-web/src/host.rs` et `hostmode.rs` sur le modèle du fork de PhotoCraft : `Host::connect("vectorcraft", canvas)`, écoute de `open` et `saved`, `post_ready`, `post_save`, `post_dirty`, `post_failed`. `craft-web-host` épinglé à une révision de `storytold/craft-libs`, comme `craft-web-api`.
 - Les ouvertures ★ dans `crates/ui-egui`, les plus petites possibles et utiles hors de Kazo : un service « écriture du document » à côté de `download` (H3), la confirmation qui appelle `SaveJob::complete` (H4), `id`, `path` et `active` dans `ui.inspect` (H7), un drapeau « hébergé » pour H9. Lire `io/save.rs` (`write_plan`, `save`), `io/open.rs` (`open_bytes`), `background.rs` et `control.rs` avant de choisir la forme ; le fork de PhotoCraft montre une forme qui marche (`Services::write_document`, `DocumentWrite`, `confirm_document_write`, `Services::hosted`).
-- H9, H10 selon Q3, et une ligne dans `docs/development.md` (« Web build ») qui décrit le mode hébergé.
+- H9, H10, et une ligne dans `docs/development.md` (« Web build ») qui décrit le mode hébergé.
 - Brouillons des issues amont dans `/mnt/project-files/vector/upstream/` (mode hébergé ; `id` et `path` dans `ui.inspect` ; réglages non gardés sur le web ; `README` de `packaging/web` qui annonce 13 Mo), en anglais, sans mention d'agent.
 - **Terminé quand** : la page d'essai qui joue l'hôte ouvre un SVG et un `.vectorcraft`, reçoit `save` avec le bon `saveAs` dans les quatre cas (réécriture d'un SVG, premier enregistrement d'un nouveau document, Enregistrer sous, changement de format), le document ne redevient propre qu'après `saved`, Enregistrer une copie et Exporter sous téléchargent toujours, et la même page sans `data-host` se comporte comme avant. Le fil donne le commit de `kazo/base` à épingler.
 
 ### 2. Solution et compilation (`vector/2-solution`)
 
-- Solution renommée (`Kazo.Vector`, `Kazo.Vector.Os`, `Kazo.Vector.Tests`), `[AppManifest]` de la décision 1, `canChangeScreen: false`, capacités de Kazo Photo, associations selon Q2.
+- Solution renommée (`Kazo.Vector`, `Kazo.Vector.Os`, `Kazo.Vector.Tests`), `[AppManifest]` de la décision 1, `canChangeScreen: false`, capacités de Kazo Photo, associations de Q2 = A.
 - Sous-module `external/KazoOs` sur `v3.3.4`, sous-module `external/vectorcraft` sur `kazo/base`.
-- `tools/build-vectorcraft.sh` (Rust stable du jour, cible `wasm32-unknown-unknown`, Trunk 0.21.14, `CRAFT_FONTS_DIR` sur `craft-fonts` à `b076417b`, `trunk build --release` dans `apps/vectorcraft-web`, réglages de taille selon Q1), workflow `build-vectorcraft.yml`, `vectorcraft.json`, test xUnit « le commit de `vectorcraft.json` est celui du sous-module ». Modèles : `Os-App-Photo` (`photo/base`) et `Os-App-PDF`.
+- `tools/build-vectorcraft.sh` (Rust stable du jour, cible `wasm32-unknown-unknown`, Trunk 0.21.14, `CRAFT_FONTS_DIR` sur `craft-fonts` à `b076417b`, `trunk build --release` dans `apps/vectorcraft-web`, réglages de taille de Q1 = A : `opt-level = "s"`, LTO « thin », échec au-delà de 90 Mio ; le build est gardé dans `wwwroot/vectorcraft`), workflow `build-vectorcraft.yml`, `vectorcraft.json`, test xUnit « le commit de `vectorcraft.json` est celui du sous-module ». Modèles : `Os-App-Photo` (`photo/base`) et `Os-App-PDF`.
 - Page d'iframe (décision 6) et fenêtre sur `CraftFrame` et `FrameStartup` : chargement, app, erreur, « Réessayer » ; thème et langue (décision 11).
 - Tant que F1 n'est pas fusionné, compiler `kazo/v0.24.1` pour roder l'outillage ; le parcours qui attend `ready` vient avec F1 (repasser alors l'épingle sur `kazo/base`).
 - **Terminé quand** : l'app démarre en WebGPU et en WebGL 2, deux fenêtres tournent ensemble, le paquet `.kazoapp` s'installe dans Kazo OS 3.3.4 ; taille du paquet, temps de démarrage et mémoire par fenêtre notés ici.
@@ -269,7 +281,7 @@ Kazo OS 3.3.4 est publié : le chantier 4 n'attend aucune version de l'OS.
 
 ### 4. Store (`vector/4-store`)
 
-- Icône propre à ce dépôt, sans marque ArtCraft ; fiche fr et en (« basé sur VectorCraft de l'équipe ArtCraft », limites connues : alpha, 128 Mio par fichier, réglages non gardés, récupération selon Q3, impression par le navigateur, fenêtre qui reste sur son écran, taille du téléchargement) ; captures ; README refait sur la fiche (`store:readme`, « Essayer » avec `?autolaunch=ca.kazo.vector`) ; `THIRD-PARTY-NOTICES` (VectorCraft, ses avis, polices OFL).
+- Icône propre à ce dépôt, sans marque ArtCraft ; fiche fr et en (« basé sur VectorCraft de l'équipe ArtCraft », limites connues : alpha, 128 Mio par fichier, réglages non gardés, pas de récupération après un arrêt brutal (issue #4), impression par le navigateur, fenêtre qui reste sur son écran, taille du téléchargement) ; captures ; README refait sur la fiche (`store:readme`, « Essayer » avec `?autolaunch=ca.kazo.vector`) ; `THIRD-PARTY-NOTICES` (VectorCraft, ses avis, polices OFL).
 - Parcours dans un Kazo OS 3.3.4 publié (`tests/installed`), workflow « Tag a release », PR au catalogue `Os-AppMarketPlace` (la signature se fait là, aucune clé ici), ligne de `features.md` dans `Kazo-ca/Os`.
 - **Terminé quand** : Kazo Vector s'installe depuis le Store, ouvre un `.svg` par double-clic et l'enregistre.
 
@@ -291,7 +303,7 @@ la session pour l'API de GitHub) ; Benoit regarde avant de publier.
 
 - [x] Étape 0 : lecture de VectorCraft 0.24.1, compilation et essai du build web (2026-11-14).
 - [x] Plan fr et en.
-- [ ] Réponses de Benoit à Q1 à Q3.
+- [x] Réponses de Benoit à Q1 à Q3 : A, A, A (2026-11-14) ; issue #4 pour la récupération de données.
 - [ ] F1 : mode hébergé dans le fork.
 - [ ] Chantier 2 : solution, manifeste, compilation depuis le fork, page d'iframe, fenêtre.
 - [ ] Chantier 3 : fenêtre, ouverture et enregistrement liés, onglets, exports, garde de fermeture.
