@@ -4,6 +4,10 @@
 
 Un dépôt d'app Kazo OS, créé avec le modèle `kazoos-solution`.
 
+Ce dépôt recevra **Kazo Vector**, l'app de dessin vectoriel de Kazo OS, bâtie sur VectorCraft.
+Le plan du portage est dans [`doc/fr/plan.md`](doc/fr/plan.md) (index :
+[`doc/fr/README.md`](doc/fr/README.md)).
+
 | Dossier | Contenu |
 | --- | --- |
 | `src/Kazo.Os.App` | L'app (app fenêtrée ; sa classe `[AppManifest]` génère `manifest.json`) |
