@@ -1,0 +1,10 @@
+{
+  "appId": "ca.kazo.vector",
+  "versions": [
+    {
+      "version": "0.1.0",
+      "path": "0.1.0/ca.kazo.vector-0.1.0.kazoapp",
+      "sha256": "a24110d93f8bf273ffaf661f2daa58bfcbbaead2fdab4363f365f700c900f72a"
+    }
+  ]
+}
