@@ -1,7 +1,7 @@
 {
-  "repository": "https://github.com/example/Os-App-MyApp",
-  "project": "src/Kazo.Os.App/Kazo.Os.App.csproj",
-  "category": "productivity",
-  "tags": ["sample"],
+  "repository": "https://github.com/Kazo-ca/Os-App-Vector",
+  "project": "src/Kazo.Vector/Kazo.Vector.csproj",
+  "category": "graphics",
+  "tags": ["vector", "drawing", "illustration", "svg", "graphics"],
   "license": "MIT"
 }

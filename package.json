@@ -5,8 +5,9 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
+    "store:readme": "node .github/scripts/store-readme.mjs",
     "test:e2e": "node --test --test-concurrency=1 tests/e2e/*.e2e.mjs",
-    "test:installed": "node tests/installed/install-and-start.mjs",
+    "test:installed": "node tests/installed/install-and-open.mjs",
     "measure:large": "node tests/e2e/measure-large.mjs"
   },
   "devDependencies": {

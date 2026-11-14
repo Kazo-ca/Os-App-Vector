@@ -314,7 +314,9 @@ la session pour l'API de GitHub) ; Benoit regarde avant de publier.
   (2026-11-14) ; sous-module sur `kazo/base` (`326de0f`) depuis F1, le parcours qui attend `ready` passe.
 - [x] Chantier 3 : fenêtre, ouverture et enregistrement liés, onglets, exports, garde de fermeture
   (2026-11-14) ; voir les mesures et les notes plus bas.
-- [ ] Chantier 4 : fiche du Store, README, avis de tiers, parcours dans l'OS publié.
+- [x] Chantier 4 : fiche du Store, README, avis de tiers, parcours dans l'OS publié (2026-11-14) ;
+  voir plus bas. L'installation depuis le Store lui-même se vérifie après la sortie
+  (`npm run test:installed -- --store <wwwroot>`).
 - [ ] Sortie : `vector/base` dans `main` (Benoit), étiquette `v0.1.0`, catalogue, `features.md`.
 
 ### Chantier 2 : mesures (2026-11-14)
@@ -383,3 +385,29 @@ Notes :
 - Chromium sans écran : un contexte WebGPU logiciel à côté d'un contexte WebGL fait perdre les deux, et VectorCraft abandonne après trois pertes. Les parcours de ce chantier tournent donc sans WebGPU (`launchBrowser({ webGpu: false })`). Rien vu de tel avec une vraie carte graphique.
 - Quand VectorCraft abandonne ses graphismes, son message dit que les modifications non enregistrées sont gardées dans le navigateur. C'est faux dans Kazo Vector, où la récupération est coupée (issue #4). À corriger dans le fork, en même temps que le mode hébergé.
 - Corrigé pendant les essais : une fenêtre fermée pendant qu'elle relisait ses onglets laissait une `TaskCanceledException` non gérée (écran d'erreur de Blazor) ; la relecture et le thème ignorent maintenant l'annulation.
+
+### Chantier 4 : fiche du Store et parcours dans l'OS publié (2026-11-14)
+
+- **Fiche** (`store/`) : descriptions fr et en, « basé sur VectorCraft de l'équipe ArtCraft », avec
+  les limites connues (alpha, 128 Mio, grands dessins lents sans carte graphique, pas de
+  récupération après un arrêt brutal (issue #4), réglages non gardés, deux dialogues au premier
+  enregistrement, impression par le navigateur, conflits de raccourcis du chantier 3, fenêtre qui
+  reste sur son écran, WebGPU ou WebGL 2, taille, Kazo OS 3.3.4) ; catégorie `graphics`, étiquettes
+  `vector drawing illustration svg graphics` ; icône 256 × 256 rendue depuis `app.svg` (travail de
+  ce dépôt, aucune marque ArtCraft) ; trois captures prises dans Kazo OS 3.3.4 publié avec l'exemple
+  `dusk-poster.svg` de VectorCraft (MIT OR Apache-2.0).
+- **README** refait sur la fiche (`npm run store:readme`, vérifié en CI), « Essayer » avec
+  `?autolaunch=ca.kazo.vector`, puis « À propos de Kazo OS » et « Développement ».
+- **Avis de tiers** : `THIRD-PARTY-NOTICES.md` et `-fr.md` (VectorCraft modifié par le fork, ses
+  avis, les polices OFL), liés dans le paquet avec `LICENSE` sous `wwwroot/legal/` ; les fichiers
+  que cite le `NOTICE` de VectorCraft sans que son build web les porte (Lucide, polices d'egui,
+  motifs de césure indiens) dans `wwwroot/legal/vectorcraft/` ; `LegalFilesTests`. Les crates Rust
+  du build web (353, lues par `cargo metadata` pour `wasm32`) sont toutes sous licences
+  permissives ; aucune MPL ni GPL obligatoire.
+- **Parcours** `tests/installed/install-and-open.mjs` dans `kazoos-wasm-3.3.4.zip`, même conteneur
+  que les chantiers 2 et 3 (WebGL 2 par SwiftShader) : `kazopkg install`, deux fenêtres (7,5 à
+  8,9 s puis 1,8 à 2,9 s ; +709 à +852 Mio, puis +66 à +112 Mio), un nouveau dessin enregistré en
+  `badge.vectorcraft` par le dialogue de l'OS, `dusk-poster.svg` déposé par l'Explorateur, ouvert
+  par double-clic (0,8 s), modifié et enregistré en place sans dialogue, licences présentes dans le
+  paquet installé, captures du Store. Deux passages, deux réussites.
+- Paquet `.kazoapp` : 30 093 222 octets (28,7 Mio).
