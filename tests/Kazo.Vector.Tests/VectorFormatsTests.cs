@@ -1,5 +1,6 @@
 using Kazo.Vector.Documents;
 using Kazo.Os.App.Abstractions;
+using Kazo.Os.AppSdk.Craft;
 
 namespace Kazo.Vector.Tests;
 
@@ -63,5 +64,36 @@ public sealed class VectorFormatsTests
             [".vectorcraft", ".vctemplate", ".svg", ".svgz", ".ai", ".ait", ".eps", ".epsf", ".ps", ".dxf", ".emf", ".wmf", ".pdf", ".afdesign"],
             VectorFormats.OpenExtensions);
         Assert.Equal(VectorFormats.NativeExtension, VectorFormats.OpenExtensions[0]);
+    }
+
+    [Fact]
+    public void VectorCraft_s_File_Open_picker_is_told_from_Place_and_Other_Script()
+    {
+        // The three pickers of apps/vectorcraft-web/src/web.rs, with a part of their accept lists.
+        PickRequest open = new(1, ".vectorcraft,.svg,.ai,.pdf,.png,.vcswatches,.gpl,.kys,.jsx,.wasm", Multiple: false);
+        PickRequest place = new(2, ".svg,.ai,.pdf,.png,.jpg,.txt,.rtf,.docx", Multiple: true);
+        PickRequest script = new(3, ".jsx,.jsxinc,.jsxbin", Multiple: false);
+
+        Assert.True(VectorFormats.IsOpenPicker(open));
+        Assert.False(VectorFormats.IsOpenPicker(place));
+        Assert.False(VectorFormats.IsOpenPicker(script));
+    }
+
+    [Theory]
+    [InlineData("logo.svg", true)]
+    [InlineData("floor.dxf", true)]
+    [InlineData("brand.vcswatches", false)]
+    [InlineData("Styles.VCSTYLES", false)]
+    [InlineData("tidy.jsx", false)]
+    public void Only_drawings_are_bound_to_a_tab(string fileName, bool isDocument)
+    {
+        Assert.Equal(isDocument, VectorFormats.IsDocument(fileName));
+    }
+
+    [Fact]
+    public void No_file_that_is_not_a_drawing_gets_an_association()
+    {
+        // Q2 = A: VectorCraft reads them from File › Open, a double click never opens them.
+        Assert.DoesNotContain(VectorFormats.FileHandlers, handler => handler.Extensions.Intersect(VectorFormats.OtherFileExtensions).Any());
     }
 }

@@ -9,7 +9,7 @@ L'app de dessin vectoriel de Kazo OS (tracés, formes, texte, dégradés, plans 
 | `src/Kazo.Vector` | L'app (app fenêtrée, sa classe `[AppManifest]` génère `manifest.json`) |
 | `src/Kazo.Vector.Os` | Un hôte qui lance tout Kazo OS avec les apps de base et cette app : le projet à démarrer |
 | `tests/Kazo.Vector.Tests` | Tests de l'app (xUnit) |
-| `tests/e2e` | Parcours de bout en bout dans l'hôte Kazo OS (Playwright) : `npm run test:e2e` après `dotnet build Kazo.Vector.slnx -c Debug` |
+| `tests/e2e` | Parcours de bout en bout dans l'hôte Kazo OS (Playwright) : `npm run test:e2e` après `dotnet build Kazo.Vector.slnx -c Debug` ; temps d'ouverture et d'enregistrement d'un grand fichier : `npm run measure:large -- <fichier.svg>` |
 | `tests/installed` | Installation et démarrage dans un Kazo OS publié : `npm run test:installed -- <wwwroot de Kazo OS>` |
 | `external/KazoOs` | Le dépôt de Kazo OS en sous-module git, sur une étiquette de version |
 | `external/vectorcraft` | Les sources de VectorCraft (notre fork `Kazo-ca/vectorcraft`) en sous-module git, seulement pour compiler VectorCraft (`tools/build-vectorcraft.sh`, workflow Build VectorCraft) |

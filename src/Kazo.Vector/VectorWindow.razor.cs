@@ -15,12 +15,12 @@ namespace Kazo.Vector;
 /// <see cref="FrameStartup.Timeout"/>.
 /// </summary>
 /// <remarks>
-/// Once VectorCraft is ready the window gives it the OS theme and the user's language (decision 11).
-/// "Ready" is VectorCraft's <c>vectorcraft:ready</c> event, which only the host mode of our fork sends
-/// (H1, fork work item F1): a build without it stays on the loading screen until the timeout.
-/// Opening, saving, the tabs bound to their files, the close guard and the file picker come with
-/// work item 3. The launch argument <c>--webgl</c> forces VectorCraft's WebGL 2 renderer, to try it
-/// without WebGPU.
+/// Once VectorCraft is ready (<c>vectorcraft:ready</c>, which only the host mode of our fork sends,
+/// fork H1) the window gives it the OS theme and the user's language (decision 11), then opens the
+/// file it was started for. Opening, saving, the exports, the tabs bound to their files and the close
+/// guard are in <c>VectorWindow.Documents.cs</c> (work item 3); the file picker, the theme and the
+/// language in <c>VectorWindow.Proxy.cs</c>. The launch argument <c>--webgl</c> forces VectorCraft's
+/// WebGL 2 renderer, to try it without WebGPU.
 /// </remarks>
 public sealed partial class VectorWindow : IAsyncDisposable
 {
@@ -46,6 +46,8 @@ public sealed partial class VectorWindow : IAsyncDisposable
     {
         CancelTimeout();
         await StopFrameAsync();
+        _nextSave?.TrySetResult(false);
+        _saveGate.Dispose();
     }
 
     /// <inheritdoc />
@@ -53,7 +55,7 @@ public sealed partial class VectorWindow : IAsyncDisposable
     protected override async Task OnAppInitializedAsync()
     {
         _request = OpenRequest.FromArguments(LaunchArguments);
-        await SetWindowTitleAsync($"{L["Untitled"]} — Kazo Vector");
+        await SetWindowTitleAsync(DocumentTitle);
     }
 
     /// <inheritdoc />
@@ -66,12 +68,17 @@ public sealed partial class VectorWindow : IAsyncDisposable
     }
 
     /// <inheritdoc />
-    /// <remarks>The window came to the front: the keyboard goes to VectorCraft.</remarks>
+    /// <remarks>
+    /// The window came to the front: the keyboard goes to VectorCraft, and the title follows the tab
+    /// in front, which VectorCraft may have changed without any change to save.
+    /// </remarks>
     protected override async Task OnWindowActivatedAsync()
     {
-        if (_frame is not null && _startup.State == FrameState.Running)
+        if (_frame is { } frame && _startup.State == FrameState.Running)
         {
-            await _frame.FocusAsync();
+            await frame.FocusAsync();
+            await RefreshTabsAsync(frame);
+            await UpdateTitleAsync();
         }
     }
 
@@ -80,7 +87,10 @@ public sealed partial class VectorWindow : IAsyncDisposable
         CraftFrame frame = new(JavaScript);
         frame.Ready += OnReadyAsync;
         frame.Failed += OnFailedAsync;
-        frame.SchemeChanged += OnSchemeChangedAsync;
+        frame.DirtyChanged += OnDirtyChangedAsync;
+        frame.Saving += OnSavingAsync;
+        frame.Exporting += OnExportingAsync;
+        ConnectProxy(frame, connect: true);
         _frame = frame;
         ArmTimeout(_startup.Attempt);
 
@@ -114,7 +124,10 @@ public sealed partial class VectorWindow : IAsyncDisposable
 
         _frame.Ready -= OnReadyAsync;
         _frame.Failed -= OnFailedAsync;
-        _frame.SchemeChanged -= OnSchemeChangedAsync;
+        _frame.DirtyChanged -= OnDirtyChangedAsync;
+        _frame.Saving -= OnSavingAsync;
+        _frame.Exporting -= OnExportingAsync;
+        ConnectProxy(_frame, connect: false);
         await _frame.DisposeAsync();
         _frame = null;
     }
@@ -142,21 +155,24 @@ public sealed partial class VectorWindow : IAsyncDisposable
             return;
         }
 
-        // VectorCraft's web build keeps no setting between two starts (decision 12): the window gives
-        // it the theme and the language each time.
-        await OnSchemeChangedAsync(await frame.GetColorSchemeAsync());
-        await ExecuteAsync(frame, "prefs.set", new { key = VectorCraftLanguage.PreferenceKey, value = VectorCraftLanguage.Of(AppContext.Culture) });
-
-        // VectorCraft starts on its home screen (New, Open, recent files), as on the desktop: the
-        // window leaves it there. Work item 3 opens the requested file instead when there is one.
-        if (IsWindowActive)
+        await ApplyThemeAndLanguageAsync(frame);
+        await PrepareDocumentAsync();
+        if (_frame is { } ready && IsWindowActive)
         {
-            await frame.FocusAsync();
+            await ready.FocusAsync();
         }
     }
 
     private async Task OnFailedAsync(string? error)
     {
+        if (_startup.State == FrameState.Running)
+        {
+            // Once running, VectorCraft also reports a file it refused (H2: too large, unreadable)
+            // as `failed`: the app is still there, so that is a message, not the error screen.
+            await ShowNoticeAsync(error ?? string.Empty, error: true);
+            return;
+        }
+
         if (_startup.OnFailed(error))
         {
             CancelTimeout();
@@ -164,18 +180,11 @@ public sealed partial class VectorWindow : IAsyncDisposable
         }
     }
 
-    // VectorCraft follows the OS theme (decision 11): its default "mediumDark" brightness for the dark
-    // scheme, "light" for the light one.
-    private async Task OnSchemeChangedAsync(string scheme)
-    {
-        if (_frame is { } frame)
-        {
-            await frame.RequestAsync("ui.set", new { brightness = VectorCraftTheme.Of(scheme) }, cancellationToken: AppContext.CancellationToken);
-        }
-    }
-
-    private Task<FrameCommandResult> ExecuteAsync(CraftFrame frame, string command, object parameters) =>
-        frame.RequestAsync("engine.execute", new { command, @params = parameters }, cancellationToken: AppContext.CancellationToken);
+    private Task<FrameCommandResult> ExecuteAsync(CraftFrame frame, string command, object parameters, CancellationToken cancellationToken = default) =>
+        frame.RequestAsync(
+            "engine.execute",
+            new { command, @params = parameters },
+            cancellationToken: cancellationToken == default ? AppContext.CancellationToken : cancellationToken);
 
     // Shows the error screen if attempt `attempt` gets no answer in time.
     private void ArmTimeout(int attempt)

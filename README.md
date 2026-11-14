@@ -9,7 +9,7 @@ The vector drawing app of Kazo OS (paths, shapes, text, gradients, artboards; `.
 | `src/Kazo.Vector` | The app (window app, its `[AppManifest]` class generates `manifest.json`) |
 | `src/Kazo.Vector.Os` | A host that runs the whole Kazo OS with the base apps and this app: the project to start |
 | `tests/Kazo.Vector.Tests` | Tests of the app (xUnit) |
-| `tests/e2e` | End-to-end runs in the Kazo OS host (Playwright): `npm run test:e2e` after `dotnet build Kazo.Vector.slnx -c Debug` |
+| `tests/e2e` | End-to-end runs in the Kazo OS host (Playwright): `npm run test:e2e` after `dotnet build Kazo.Vector.slnx -c Debug`; a large file's open and save times: `npm run measure:large -- <file.svg>` |
 | `tests/installed` | Install and start in a published Kazo OS: `npm run test:installed -- <Kazo OS wwwroot>` |
 | `external/KazoOs` | The Kazo OS repository as a git submodule, on a release tag |
 | `external/vectorcraft` | VectorCraft's sources (our fork `Kazo-ca/vectorcraft`) as a git submodule, only to compile VectorCraft (`tools/build-vectorcraft.sh`, workflow Build VectorCraft) |

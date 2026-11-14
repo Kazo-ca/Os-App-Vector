@@ -304,7 +304,8 @@ session's reach for the GitHub API); Benoit looks before publishing.
   `/mnt/project-files/vector/upstream/vectorcraft-web-host-mode.md`, for Benoit to publish.
 - [x] Work item 2: solution, manifest, compilation from the fork, iframe page, window (2026-11-14;
   submodule on `kazo/base` (`326de0f`) since F1, the run that waits for `ready` passes).
-- [ ] Work item 3: window, bound open and save, tabs, exports, close guard.
+- [x] Work item 3: window, bound open and save, tabs, exports, close guard (2026-11-14); see the
+  measures and notes below.
 - [ ] Work item 4: Store listing, README, third-party notices, run in the released OS.
 - [ ] Release: `vector/base` into `main` (Benoit), tag `v0.1.0`, catalog, `features.md`.
 
@@ -328,3 +329,48 @@ VectorCraft compiled from `kazo/v0.24.1` (`f4922aa7`), the upstream release with
 
 Since 2026-11-14 the submodule is on the fork's `kazo/base` (`326de0f`, F1 merged): build 71,859,008 bytes, the window leaves its loading screen on `vectorcraft:ready` and the end-to-end run that waits for it passes (4/4). Before that, without F1, the window stayed on its loading screen (VectorCraft never said `ready`) and showed the
 error screen after the module's timeout.
+
+### Work item 3: measures and notes (2026-11-14)
+
+What is done, in `src/Kazo.Vector`:
+
+- **Opening**: the file given at launch, `xdg-open` and a double click (one window per file the OS opens, decision 7), and VectorCraft's File › Open (and the home screen's "Open…") replaced by the OS dialog, several files at once, each in a tab. A drawing already open comes to the front; a file whose name is already bound in the window opens in a new window (decision 9). Files that are not drawings (swatches, libraries, presets, scripts) go to VectorCraft unbound. The other pickers (Place, Scripts › Other Script) get the files read by the OS.
+- **Saving**: the module's rule (decision 8). A drawing never saved, or Save As, goes through the OS dialog; a bound drawing is rewritten in place; the drawing is clean only once the file is written. A cancelled dialog or a refused write leaves the drawing modified and says so in a banner of the window. Copies and exports (`Exporting`, `.zip` included): always a copy, through the OS dialog. Formats VectorCraft keeps no path for (`dxf`, `emf`, `wmf`, `ait`…) are tracked by their tab's `id`.
+- **Tabs and title**: each tab bound to its file (`ui.inspect`), title `*name — Kazo Vector` for the active tab.
+- **Close guard** (decision 10): Yes / No / Cancel; Yes activates each modified drawing, runs `file.save` and waits for its own write, two minutes at most; any failure keeps the window open.
+- **Theme and language** (decision 11) at start and live; no settings kept (decision 12).
+
+Checked: `dotnet test` 103 of 103; `tests/e2e/open-save.e2e.mjs` 6 of 6 (new drawing saved, saved again in place and reopened by the OS; SVG rewritten in place, SVG copy and Save As `.vectorcraft`; close guard Cancel, Yes then dialog cancelled, Yes then saved; File › Open through the OS dialog; same name from another folder in a new window; `Alt+Q` with the cursor in the drawing goes through the guard).
+
+**Large file** (`npm run measure:large -- <file.svg>`, same container as work item 2: 4 cores, no graphics card, WebGL 2 through SwiftShader; memory = Chromium's renderer processes):
+
+| File | Step | Time | Memory |
+| --- | --- | --- | --- |
+| 30 MB SVG (embedded 3000 × 2600 PNG image and 2,000 curves) | upload through the File Explorer | 17.5 s | 415 → 1,187 MiB |
+| | Kazo Vector started on the file | 9.7 s | 1,399 MiB |
+| | drawing open (from the launch) | 23.6 s, about 14 s of reading | 1,535 MiB |
+| | save in place (SVG) | 17.8 s | 1,813 MiB |
+| | Save As `.vectorcraft` (dialog included) | 34.3 s | 1,929 MiB |
+| 40 MB SVG (48,899 curves of 16 segments, very large and overlapping) | upload through the File Explorer | 24.4 s | 416 → 1,250 MiB |
+| | start | 13.3 s | 1,341 MiB |
+| | drawing open (from the launch) | 56.8 s, about 43 s of reading | **5,015 MiB** |
+| | edit, save | VectorCraft stops answering for 25 min: software rendering of these curves never finishes a frame | — |
+
+The second case is a worst case for rendering, not for files: on this container with no graphics card, VectorCraft reads the file but no longer draws. To redo on a real graphics card before the Store listing. The File Explorer upload keeps the file in memory (+800 MiB for 30 to 40 MB), which belongs to Kazo OS, not Kazo Vector (joins issue Kazo-ca/Os#520).
+
+**Shortcut conflicts** (decision 13), to write in the listing:
+
+| Chord kept by the OS | In VectorCraft | Effect |
+| --- | --- | --- |
+| `Alt+Shift+Left` / `Alt+Shift+Right` | Type tool, vertical type: baseline shift | Lost in vertical type; the Character panel keeps it. In horizontal type the shift is on `Alt+Shift+Up/Down`, free. |
+| `Ctrl+Alt+Shift+Left` / `Right` | The same, by five steps | Lost the same way. |
+| `Alt+Space` | Space (hand) pressed while holding `Alt` | Opens the OS window menu instead of panning; release `Alt` first. |
+
+No other OS chord (`Alt+Tab`, `Alt+F4`, `Alt+Q`, `Alt+F3` to `Alt+F11`, `Super+…`) is used by VectorCraft; its `Ctrl+Alt+…` shortcuts (such as `Ctrl+Alt+Q`, reset tracking) are not reserved and stay VectorCraft's. `Ctrl+N` stays VectorCraft's New Document.
+
+Notes:
+
+- A first save shows two dialogs: VectorCraft's "Save options" (name and format), then the OS one (folder). That is F1's behaviour; removing it needs a fork change (let the host choose the format), to propose upstream with the host mode.
+- Headless Chromium: a software WebGPU context next to a WebGL one loses both, and VectorCraft gives up after three losses. This work item's runs therefore have no WebGPU (`launchBrowser({ webGpu: false })`). Nothing like it seen with a real graphics card.
+- When VectorCraft gives up its graphics, its message says unsaved changes are kept in the browser. That is wrong in Kazo Vector, where recovery is off (issue #4). To fix in the fork, together with the host mode.
+- Fixed during the trials: a window closed while it was reading its tabs left an unhandled `TaskCanceledException` (Blazor's error screen); the reading and the theme now ignore the cancellation.

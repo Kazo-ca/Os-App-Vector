@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test:e2e": "node --test --test-concurrency=1 tests/e2e/*.e2e.mjs",
-    "test:installed": "node tests/installed/install-and-start.mjs"
+    "test:installed": "node tests/installed/install-and-start.mjs",
+    "measure:large": "node tests/e2e/measure-large.mjs"
   },
   "devDependencies": {
     "playwright": "1.63.0"

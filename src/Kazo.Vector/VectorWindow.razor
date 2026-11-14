@@ -21,4 +21,13 @@
             <button type="button" class="vector-retry" @onclick="RetryAsync">@L["Retry"]</button>
         </div>
     }
+
+    @if (_notice is not null)
+    {
+        @* Over VectorCraft, at the bottom right: a failed write, a cancelled save, a copy written. *@
+        <div class="vector-notice @(_noticeIsError ? "error" : string.Empty)" role="@(_noticeIsError ? "alert" : "status")">
+            <span class="vector-notice-text">@_notice</span>
+            <button type="button" class="vector-notice-close" aria-label="@L["Dismiss"]" @onclick="DismissNotice">×</button>
+        </div>
+    }
 </div>
