@@ -312,7 +312,8 @@ la session pour l'API de GitHub) ; Benoit regarde avant de publier.
   `/mnt/project-files/vector/upstream/vectorcraft-web-host-mode.md`, à publier par Benoit.
 - [x] Chantier 2 : solution, manifeste, compilation depuis le fork, page d'iframe, fenêtre
   (2026-11-14) ; sous-module sur `kazo/base` (`326de0f`) depuis F1, le parcours qui attend `ready` passe.
-- [ ] Chantier 3 : fenêtre, ouverture et enregistrement liés, onglets, exports, garde de fermeture.
+- [x] Chantier 3 : fenêtre, ouverture et enregistrement liés, onglets, exports, garde de fermeture
+  (2026-11-14) ; voir les mesures et les notes plus bas.
 - [ ] Chantier 4 : fiche du Store, README, avis de tiers, parcours dans l'OS publié.
 - [ ] Sortie : `vector/base` dans `main` (Benoit), étiquette `v0.1.0`, catalogue, `features.md`.
 
@@ -337,3 +338,48 @@ changement.
 
 Depuis le 2026-11-14, le sous-module est sur `kazo/base` du fork (`326de0f`, F1 fusionné) : build de 71 859 008 octets, la fenêtre quitte son écran de chargement sur `vectorcraft:ready` et le parcours qui l'attend passe (4 sur 4). Avant cela, sans F1, la fenêtre restait sur son écran de chargement (VectorCraft ne disait jamais `ready`) et
 montrait l'écran d'erreur après le délai du module.
+
+### Chantier 3 : mesures et notes (2026-11-14)
+
+Ce qui est fait, dans `src/Kazo.Vector` :
+
+- **Ouverture** : le fichier du lancement, `xdg-open` et le double-clic (une fenêtre par fichier ouvert par l'OS, décision 7), et Fichier › Ouvrir de VectorCraft (et « Ouvrir… » de l'écran d'accueil) remplacé par le dialogue de l'OS, plusieurs fichiers d'un coup, chacun dans un onglet. Un dessin déjà ouvert revient au premier plan ; un fichier dont le nom est déjà lié dans la fenêtre s'ouvre dans une nouvelle fenêtre (décision 9). Les fichiers qui ne sont pas des dessins (nuanciers, bibliothèques, préréglages, scripts) partent à VectorCraft sans liaison. Les autres sélecteurs (Importer, Scripts › Autre script) reçoivent les fichiers lus par l'OS.
+- **Enregistrement** : règle du module (décision 8). Un dessin jamais enregistré ou un Enregistrer sous passe par le dialogue de l'OS ; un dessin lié est réécrit en place ; le dessin n'est propre qu'une fois le fichier écrit. Un dialogue annulé ou une écriture refusée laisse le dessin modifié et le dit dans un bandeau de la fenêtre. Copies et exports (`Exporting`, `.zip` compris) : toujours une copie, par le dialogue de l'OS. Les formats dont VectorCraft ne garde pas le chemin (`dxf`, `emf`, `wmf`, `ait`…) sont suivis par l'`id` de leur onglet.
+- **Onglets et titre** : chaque onglet lié à son fichier (`ui.inspect`), titre `*nom — Kazo Vector` sur l'onglet actif.
+- **Garde de fermeture** (décision 10) : Oui / Non / Annuler ; Oui active chaque dessin modifié, lance `file.save` et attend sa propre écriture, deux minutes au plus ; tout échec garde la fenêtre ouverte.
+- **Thème et langue** (décision 11) au démarrage et en direct ; aucun réglage gardé (décision 12).
+
+Vérifié : `dotnet test` 103 sur 103 ; `tests/e2e/open-save.e2e.mjs` 6 sur 6 (nouveau dessin enregistré puis réenregistré en place et rouvert par l'OS ; SVG réécrit en place, copie SVG et Enregistrer sous `.vectorcraft` ; garde de fermeture Annuler, Oui puis dialogue annulé, Oui puis enregistré ; Fichier › Ouvrir par le dialogue de l'OS ; même nom dans un autre dossier en nouvelle fenêtre ; `Alt+Q` le curseur dans le dessin passe par la garde).
+
+**Grand fichier** (`npm run measure:large -- <fichier.svg>`, même conteneur que le chantier 2 : 4 cœurs, sans carte graphique, WebGL 2 par SwiftShader ; mémoire = processus de rendu de Chromium) :
+
+| Fichier | Étape | Temps | Mémoire |
+| --- | --- | --- | --- |
+| SVG de 30 Mo (image PNG intégrée de 3000 × 2600 et 2 000 courbes) | dépôt par l'Explorateur | 17,5 s | 415 → 1 187 Mio |
+| | démarrage de Kazo Vector sur le fichier | 9,7 s | 1 399 Mio |
+| | dessin ouvert (depuis le lancement) | 23,6 s, soit environ 14 s de lecture | 1 535 Mio |
+| | enregistrement en place (SVG) | 17,8 s | 1 813 Mio |
+| | Enregistrer sous `.vectorcraft` (dialogue compris) | 34,3 s | 1 929 Mio |
+| SVG de 40 Mo (48 899 courbes de 16 segments, très grandes et superposées) | dépôt par l'Explorateur | 24,4 s | 416 → 1 250 Mio |
+| | démarrage | 13,3 s | 1 341 Mio |
+| | dessin ouvert (depuis le lancement) | 56,8 s, soit environ 43 s de lecture | **5 015 Mio** |
+| | modification, enregistrement | VectorCraft ne répond plus en 25 min : le rendu logiciel de ces courbes ne finit pas une image | — |
+
+Le second cas est un pire cas de rendu, pas de fichier : sur ce conteneur sans carte graphique, VectorCraft lit le fichier mais ne dessine plus. À refaire sur une vraie carte graphique avant la fiche du Store. Le dépôt par l'Explorateur garde le fichier en mémoire (+800 Mio pour 30 à 40 Mo), ce qui relève de Kazo OS, pas de Kazo Vector (rejoint l'issue Kazo-ca/Os#520).
+
+**Conflits de raccourcis** (décision 13), à écrire dans la fiche :
+
+| Accord gardé par l'OS | Dans VectorCraft | Effet |
+| --- | --- | --- |
+| `Alt+Maj+Gauche` / `Alt+Maj+Droite` | Outil Texte, texte vertical : décalage de la ligne de base | Perdu dans le texte vertical ; le panneau Caractère le garde. En texte horizontal le décalage est sur `Alt+Maj+Haut/Bas`, libre. |
+| `Ctrl+Alt+Maj+Gauche` / `Droite` | Même chose, par cinq pas | Perdu de la même façon. |
+| `Alt+Espace` | Espace (main) pressé en tenant `Alt` | Ouvre le menu de la fenêtre de l'OS au lieu de déplacer la vue ; lâcher `Alt` d'abord. |
+
+Aucun autre accord de l'OS (`Alt+Tab`, `Alt+F4`, `Alt+Q`, `Alt+F3` à `Alt+F11`, `Super+…`) n'est pris par VectorCraft ; ses raccourcis `Ctrl+Alt+…` (comme `Ctrl+Alt+Q`, réinitialiser l'approche) ne sont pas réservés et restent à VectorCraft. `Ctrl+N` reste « Nouveau document » de VectorCraft.
+
+Notes :
+
+- Un premier enregistrement montre deux dialogues : « Options d'enregistrement » de VectorCraft (nom et format), puis celui de l'OS (dossier). C'est le comportement de F1 ; le supprimer demande un changement du fork (laisser l'hôte choisir le format), à proposer en amont avec le mode hébergé.
+- Chromium sans écran : un contexte WebGPU logiciel à côté d'un contexte WebGL fait perdre les deux, et VectorCraft abandonne après trois pertes. Les parcours de ce chantier tournent donc sans WebGPU (`launchBrowser({ webGpu: false })`). Rien vu de tel avec une vraie carte graphique.
+- Quand VectorCraft abandonne ses graphismes, son message dit que les modifications non enregistrées sont gardées dans le navigateur. C'est faux dans Kazo Vector, où la récupération est coupée (issue #4). À corriger dans le fork, en même temps que le mode hébergé.
+- Corrigé pendant les essais : une fenêtre fermée pendant qu'elle relisait ses onglets laissait une `TaskCanceledException` non gérée (écran d'erreur de Blazor) ; la relecture et le thème ignorent maintenant l'annulation.

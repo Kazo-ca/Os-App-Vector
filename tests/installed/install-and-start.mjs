@@ -11,7 +11,7 @@
 // the trimmed runtime included), opens two Kazo Vector windows from the launcher and waits until
 // VectorCraft runs in each iframe. It prints how long each start took and the memory of the
 // browser's renderer process with the OS alone, one window and two. Not part of CI: it needs
-// WebGL 2 in the browser and several minutes. Work item 3 extends it to opening and saving.
+// WebGL 2 in the browser and several minutes. Work item 4 extends it to opening and saving in the released OS.
 import { execFileSync } from 'node:child_process';
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
