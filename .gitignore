@@ -12,3 +12,7 @@ artifacts/
 
 # npm (the end-to-end runs)
 node_modules
+
+# Screenshot npm run test:installed writes when it fails, and npm's lock file (as in the other app repositories)
+installed-failure.png
+package-lock.json

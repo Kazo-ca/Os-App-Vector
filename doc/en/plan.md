@@ -306,7 +306,9 @@ session's reach for the GitHub API); Benoit looks before publishing.
   submodule on `kazo/base` (`326de0f`) since F1, the run that waits for `ready` passes).
 - [x] Work item 3: window, bound open and save, tabs, exports, close guard (2026-11-14); see the
   measures and notes below.
-- [ ] Work item 4: Store listing, README, third-party notices, run in the released OS.
+- [x] Work item 4: Store listing, README, third-party notices, run in the released OS (2026-11-14);
+  see below. Installing from the Store itself is checked after the release
+  (`npm run test:installed -- --store <wwwroot>`).
 - [ ] Release: `vector/base` into `main` (Benoit), tag `v0.1.0`, catalog, `features.md`.
 
 ### Work item 2: measures (2026-11-14)
@@ -374,3 +376,29 @@ Notes:
 - Headless Chromium: a software WebGPU context next to a WebGL one loses both, and VectorCraft gives up after three losses. This work item's runs therefore have no WebGPU (`launchBrowser({ webGpu: false })`). Nothing like it seen with a real graphics card.
 - When VectorCraft gives up its graphics, its message says unsaved changes are kept in the browser. That is wrong in Kazo Vector, where recovery is off (issue #4). To fix in the fork, together with the host mode.
 - Fixed during the trials: a window closed while it was reading its tabs left an unhandled `TaskCanceledException` (Blazor's error screen); the reading and the theme now ignore the cancellation.
+
+### Work item 4: Store listing and run in the released OS (2026-11-14)
+
+- **Listing** (`store/`): French and English descriptions, "based on VectorCraft by the ArtCraft
+  team", with the known limits (alpha, 128 MiB, large drawings slow without a graphics card, no
+  recovery after a crash (issue #4), settings not kept, two dialogs on the first save, printing by
+  the browser, the shortcut conflicts of work item 3, window kept on its screen, WebGPU or WebGL 2,
+  size, Kazo OS 3.3.4); category `graphics`, tags `vector drawing illustration svg graphics`; a
+  256 × 256 icon rendered from `app.svg` (this repository's work, no ArtCraft mark); three
+  screenshots taken in the released Kazo OS 3.3.4 with VectorCraft's example `dusk-poster.svg`
+  (MIT OR Apache-2.0).
+- **README** rebuilt on the listing (`npm run store:readme`, checked in CI), "Try it" with
+  `?autolaunch=ca.kazo.vector`, then "About Kazo OS" and "Development".
+- **Third-party notices**: `THIRD-PARTY-NOTICES.md` and `-fr.md` (VectorCraft as modified by the
+  fork, its notices, the OFL fonts), linked into the package with `LICENSE` under `wwwroot/legal/`;
+  the files VectorCraft's `NOTICE` names but its web build does not carry (Lucide, egui's fonts,
+  the Indic hyphenation patterns) in `wwwroot/legal/vectorcraft/`; `LegalFilesTests`. The Rust
+  crates of the web build (353, read with `cargo metadata` for `wasm32`) are all under permissive
+  licenses; no MPL and no mandatory GPL.
+- **Run** `tests/installed/install-and-open.mjs` in `kazoos-wasm-3.3.4.zip`, same container as work
+  items 2 and 3 (WebGL 2 by SwiftShader): `kazopkg install`, two windows (7.5 to 8.9 s then 1.8 to
+  2.9 s; +709 to +852 MiB, then +66 to +112 MiB), a new drawing saved as `badge.vectorcraft`
+  through the OS dialog, `dusk-poster.svg` uploaded through the File Explorer, opened by
+  double-click (0.8 s), changed and saved in place with no dialog, licenses in the installed
+  package, Store screenshots. Two runs, two passes.
+- `.kazoapp` package: 30,093,222 bytes (28.7 MiB).
