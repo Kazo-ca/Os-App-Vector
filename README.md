@@ -4,6 +4,10 @@
 
 A Kazo OS app repository, made with the `kazoos-solution` template.
 
+This repository will hold **Kazo Vector**, the vector drawing app of Kazo OS, built on
+VectorCraft. The port plan is in [`doc/en/plan.md`](doc/en/plan.md) (index:
+[`doc/en/README.md`](doc/en/README.md)).
+
 | Folder | Content |
 | --- | --- |
 | `src/Kazo.Os.App` | The app (window app, its `[AppManifest]` class generates `manifest.json`) |
