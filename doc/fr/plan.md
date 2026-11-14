@@ -304,7 +304,12 @@ la session pour l'API de GitHub) ; Benoit regarde avant de publier.
 - [x] Étape 0 : lecture de VectorCraft 0.24.1, compilation et essai du build web (2026-11-14).
 - [x] Plan fr et en.
 - [x] Réponses de Benoit à Q1 à Q3 : A, A, A (2026-11-14) ; issue #4 pour la récupération de données.
-- [ ] F1 : mode hébergé dans le fork.
+- [x] F1 : mode hébergé dans le fork (2026-11-14, Kazo-ca/vectorcraft#1, `kazo/base` = `326de0f4`).
+  Page d'essai `data-host="page"` : SVG et `.vectorcraft` ouverts, `save` avec le bon `saveAs` dans
+  les quatre cas, document propre seulement après `saved`, copie et export téléchargés, rien de
+  changé sans `data-host` (19 vérifications Playwright). `.wasm` 71 859 008 octets (`opt-level = "s"`),
+  compilation 12 min 26 s, `ready` en 1,3 s environ. Brouillons d'issues amont (en anglais) dans
+  `/mnt/project-files/vector/upstream/vectorcraft-web-host-mode.md`, à publier par Benoit.
 - [x] Chantier 2 : solution, manifeste, compilation depuis le fork, page d'iframe, fenêtre
   (2026-11-14 ; le test qui attend `ready` attend F1, puis le sous-module passe sur `kazo/base`).
 
