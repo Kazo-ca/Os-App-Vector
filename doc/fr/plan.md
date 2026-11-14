@@ -311,7 +311,10 @@ la session pour l'API de GitHub) ; Benoit regarde avant de publier.
   compilation 12 min 26 s, `ready` en 1,3 s environ. Brouillons d'issues amont (en anglais) dans
   `/mnt/project-files/vector/upstream/vectorcraft-web-host-mode.md`, à publier par Benoit.
 - [x] Chantier 2 : solution, manifeste, compilation depuis le fork, page d'iframe, fenêtre
-  (2026-11-14 ; le test qui attend `ready` attend F1, puis le sous-module passe sur `kazo/base`).
+  (2026-11-14) ; sous-module sur `kazo/base` (`326de0f`) depuis F1, le parcours qui attend `ready` passe.
+- [ ] Chantier 3 : fenêtre, ouverture et enregistrement liés, onglets, exports, garde de fermeture.
+- [ ] Chantier 4 : fiche du Store, README, avis de tiers, parcours dans l'OS publié.
+- [ ] Sortie : `vector/base` dans `main` (Benoit), étiquette `v0.1.0`, catalogue, `features.md`.
 
 ### Chantier 2 : mesures (2026-11-14)
 
@@ -332,9 +335,5 @@ changement.
 | Vitesse de dessin | SVG de 20 000 courbes remplies et tracées, WebGL 2, deux tours, build « taille » contre le `vectorcraft-web-0.24.1.zip` officiel : démarrage 0,6–0,7 s contre 0,7–0,8 s ; ouverture 1,8–2,3 s contre 1,8–1,9 s ; zoom avant ou arrière avec l'image peinte 730–820 ms contre 620–770 ms ; tout sélectionner 1,7 s contre 2,2–2,3 s ; déplacer les 20 000 objets 11,8–12,3 s contre 10,9–14,3 s. L'écart reste dans le bruit du rendu logiciel, sauf le zoom, environ 10 % plus lent : pas une raison de changer de réglage. À refaire sur une vraie carte graphique. |
 | Polices servies | VectorCraft va chercher `fonts/<hash>/…` à côté de sa page : la page de l'iframe porte `<base href="../vectorcraft/">` pour qu'elles viennent du dossier du build (les autres adresses de la page ne changent pas). |
 
-Sans F1, la fenêtre reste sur son écran de chargement (VectorCraft ne dit jamais `ready`) et
-montre l'écran d'erreur après le délai du module ; VectorCraft tourne quand même dans l'iframe
-cachée.
-- [ ] Chantier 3 : fenêtre, ouverture et enregistrement liés, onglets, exports, garde de fermeture.
-- [ ] Chantier 4 : fiche du Store, README, avis de tiers, parcours dans l'OS publié.
-- [ ] Sortie : `vector/base` dans `main` (Benoit), étiquette `v0.1.0`, catalogue, `features.md`.
+Depuis le 2026-11-14, le sous-module est sur `kazo/base` du fork (`326de0f`, F1 fusionné) : build de 71 859 008 octets, la fenêtre quitte son écran de chargement sur `vectorcraft:ready` et le parcours qui l'attend passe (4 sur 4). Avant cela, sans F1, la fenêtre restait sur son écran de chargement (VectorCraft ne disait jamais `ready`) et
+montrait l'écran d'erreur après le délai du module.

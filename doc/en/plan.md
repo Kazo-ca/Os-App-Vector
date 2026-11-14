@@ -303,7 +303,10 @@ session's reach for the GitHub API); Benoit looks before publishing.
   12 min 26 s, `ready` in about 1.3 s. Upstream issue drafts (English) in
   `/mnt/project-files/vector/upstream/vectorcraft-web-host-mode.md`, for Benoit to publish.
 - [x] Work item 2: solution, manifest, compilation from the fork, iframe page, window (2026-11-14;
-  the test that waits for `ready` waits for F1, then the submodule moves to `kazo/base`).
+  submodule on `kazo/base` (`326de0f`) since F1, the run that waits for `ready` passes).
+- [ ] Work item 3: window, bound open and save, tabs, exports, close guard.
+- [ ] Work item 4: Store listing, README, third-party notices, run in the released OS.
+- [ ] Release: `vector/base` into `main` (Benoit), tag `v0.1.0`, catalog, `features.md`.
 
 ### Work item 2: measures (2026-11-14)
 
@@ -323,8 +326,5 @@ VectorCraft compiled from `kazo/v0.24.1` (`f4922aa7`), the upstream release with
 | Drawing speed | SVG of 20,000 filled and stroked curves, WebGL 2, two rounds, size build vs the official `vectorcraft-web-0.24.1.zip`: start 0.6–0.7 s vs 0.7–0.8 s; open 1.8–2.3 s vs 1.8–1.9 s; zoom in or out with the painted frame 730–820 ms vs 620–770 ms; select all 1.7 s vs 2.2–2.3 s; move the 20,000 objects 11.8–12.3 s vs 10.9–14.3 s. The difference stays within the noise of software rendering except zooming, about 10 % slower: not a reason to change the setting. To redo on a real graphics card. |
 | Served fonts | VectorCraft fetches `fonts/<hash>/…` relative to its page: the iframe page carries `<base href="../vectorcraft/">` so they come from the build's folder (the other addresses of the page stay the same). |
 
-Without F1 the window stays on its loading screen (VectorCraft never says `ready`) and shows the
-error screen after the module's timeout; VectorCraft itself runs in the hidden iframe.
-- [ ] Work item 3: window, bound open and save, tabs, exports, close guard.
-- [ ] Work item 4: Store listing, README, third-party notices, run in the released OS.
-- [ ] Release: `vector/base` into `main` (Benoit), tag `v0.1.0`, catalog, `features.md`.
+Since 2026-11-14 the submodule is on the fork's `kazo/base` (`326de0f`, F1 merged): build 71,859,008 bytes, the window leaves its loading screen on `vectorcraft:ready` and the end-to-end run that waits for it passes (4/4). Before that, without F1, the window stayed on its loading screen (VectorCraft never said `ready`) and showed the
+error screen after the module's timeout.
