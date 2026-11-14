@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!--
+  The page of the Kazo Vector iframe (doc/en/plan.md, decision 6). VectorCraft runs here, in page host
+  mode (data-host="page", fork work item F1). craft-proxy.js, served by Kazo OS with the
+  Kazo.Os.AppSdk.Craft module (ADR 0259), reads data-craft-app and data-craft-build, starts
+  VectorCraft from ../vectorcraft/vectorcraft.json and relays its canvas events to the window through
+  the MessagePort the window hands over. No "control" parameter: VectorCraft always installs
+  window.vectorcraft, the command API the proxy uses.
+
+  vectorcraft_loading is the element of VectorCraft's own page: VectorCraft removes it once it runs,
+  and writes its start error into it, or its message when the graphics renderer is lost for good
+  (after three restarts). In host mode it also tells the window (vectorcraft:failed, fork H1), which
+  shows its own error screen with "Retry". No inline script or style: the module's craft-page.css
+  sizes the canvas and the loading element.
+
+  The base is the build's folder: VectorCraft fetches its served fonts (fonts/<hash>/…, decision 14)
+  relative to the page. The other addresses resolve to the same files with or without it, since host/
+  and vectorcraft/ are siblings.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base href="../vectorcraft/">
+  <title>Kazo Vector</title>
+  <link rel="stylesheet" href="../../Kazo.Os.AppSdk.Craft/craft-page.css">
+  <script type="module" src="../../Kazo.Os.AppSdk.Craft/craft-proxy.js"></script>
+</head>
+<body>
+  <canvas id="vectorcraft_canvas" data-host="page"
+          data-craft-app="vectorcraft" data-craft-build="../vectorcraft/vectorcraft.json"></canvas>
+  <div id="vectorcraft_loading" data-craft-loading aria-hidden="true"></div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+@inherits WindowAppBase
+
+<div class="vector-window" role="application" aria-label="@L["EditorLabel"]">
+    @* craft-host.js (Kazo.Os.AppSdk.Craft) puts VectorCraft's iframe in this element; it stays hidden until VectorCraft is ready. *@
+    <div class="vector-frame @(_startup.State == FrameState.Running ? "running" : string.Empty)" @ref="_frameHost"></div>
+
+    @if (_startup.State == FrameState.Loading)
+    {
+        <div class="vector-screen" role="status">
+            <div class="vector-spinner" aria-hidden="true"></div>
+            <p class="vector-screen-title">@L["Loading"]</p>
+            <p class="vector-screen-hint">@L["LoadingHint"]</p>
+        </div>
+    }
+    else if (_startup.State == FrameState.Failed)
+    {
+        <div class="vector-screen failed" role="alert">
+            <p class="vector-screen-title">@L["FailedTitle"]</p>
+            <p class="vector-screen-detail">@FailureText</p>
+            <p class="vector-screen-hint">@L["FailedHint"]</p>
+            <button type="button" class="vector-retry" @onclick="RetryAsync">@L["Retry"]</button>
+        </div>
+    }
+
+    @if (_notice is not null)
+    {
+        @* Over VectorCraft, at the bottom right: a failed write, a cancelled save, a copy written. *@
+        <div class="vector-notice @(_noticeIsError ? "error" : string.Empty)" role="@(_noticeIsError ? "alert" : "status")">
+            <span class="vector-notice-text">@_notice</span>
+            <button type="button" class="vector-notice-close" aria-label="@L["Dismiss"]" @onclick="DismissNotice">×</button>
+        </div>
+    }
+</div>
