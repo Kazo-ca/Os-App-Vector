@@ -1,20 +1,32 @@
 > [Version française](readme-fr.md)
 
-# Kazo.Os.App
+# Kazo Vector
 
-A Kazo OS app repository, made with the `kazoos-solution` template.
-
-This repository will hold **Kazo Vector**, the vector drawing app of Kazo OS, built on
-VectorCraft. The port plan is in [`doc/en/plan.md`](doc/en/plan.md) (index:
-[`doc/en/README.md`](doc/en/README.md)).
+The vector drawing app of Kazo OS (paths, shapes, text, gradients, artboards; `.svg`, `.ai`, `.eps`, `.pdf` files), built on [VectorCraft](https://github.com/storytold/vectorcraft) (ArtCraft team), compiled from our fork [`Kazo-ca/vectorcraft`](https://github.com/Kazo-ca/vectorcraft). Work in progress: see the [plan](doc/en/plan.md) (index: [`doc/en/README.md`](doc/en/README.md)). This repository was made with the `kazoos-solution` template; the Store listing replaces this page at the Store work item.
 
 | Folder | Content |
 | --- | --- |
-| `src/Kazo.Os.App` | The app (window app, its `[AppManifest]` class generates `manifest.json`) |
-| `src/Kazo.Os.App.Os` | A host that runs the whole Kazo OS with the base apps and this app: the project to start |
-| `tests/Kazo.Os.App.Tests` | Tests of the app |
+| `src/Kazo.Vector` | The app (window app, its `[AppManifest]` class generates `manifest.json`) |
+| `src/Kazo.Vector.Os` | A host that runs the whole Kazo OS with the base apps and this app: the project to start |
+| `tests/Kazo.Vector.Tests` | Tests of the app (xUnit) |
+| `tests/e2e` | End-to-end runs in the Kazo OS host (Playwright): `npm run test:e2e` after `dotnet build Kazo.Vector.slnx -c Debug` |
+| `tests/installed` | Install and start in a published Kazo OS: `npm run test:installed -- <Kazo OS wwwroot>` |
 | `external/KazoOs` | The Kazo OS repository as a git submodule, on a release tag |
+| `external/vectorcraft` | VectorCraft's sources (our fork `Kazo-ca/vectorcraft`) as a git submodule, only to compile VectorCraft (`tools/build-vectorcraft.sh`, workflow Build VectorCraft) |
+| `src/Kazo.Vector/wwwroot/vectorcraft` | The VectorCraft web build and its provenance `vectorcraft.json`, written by `tools/build-vectorcraft.sh`, never edited by hand |
 | `store/` | What the Kazo OS Store shows: icon (PNG 256×256), short descriptions, descriptions, `store.json` |
+
+## Compiling VectorCraft
+
+`tools/build-vectorcraft.sh` compiles the commit of `external/vectorcraft` with Trunk 0.21.14, Rust
+stable and the `wasm32-unknown-unknown` target, with the `craft-fonts` faces at the revision
+VectorCraft's releases pin, optimised for size (`opt-level = "s"` with VectorCraft's thin LTO,
+debug info stripped, set by `CARGO_PROFILE_RELEASE_*` without changing the fork), then replaces
+`src/Kazo.Vector/wwwroot/vectorcraft/` with the result and its provenance. It fails when the `.wasm`
+is above 90 MiB (GitHub refuses files above 100 MiB). The **Build VectorCraft** workflow (Actions
+tab) does the same and opens a pull request with the build. To move to another VectorCraft commit:
+move the submodule to a commit of the fork, then rebuild; a test fails while the build and the
+submodule disagree.
 
 ## First steps
 
@@ -28,8 +40,8 @@ git submodule add --depth 1 https://github.com/Kazo-ca/Os.git external/KazoOs
 git -C external/KazoOs checkout v<Kazo OS version>
 ```
 
-Then open the `.sln` in Visual Studio or Rider and start `Kazo.Os.App.Os`, or run
-`dotnet run --project src/Kazo.Os.App.Os`.
+Then open the `Kazo.Vector.slnx` in Visual Studio or Rider and start `Kazo.Vector.Os`, or run
+`dotnet run --project src/Kazo.Vector.Os`.
 
 ## The Kazo OS version
 

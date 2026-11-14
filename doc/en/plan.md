@@ -297,7 +297,29 @@ session's reach for the GitHub API); Benoit looks before publishing.
 - [x] Plan fr and en.
 - [x] Benoit's answers to Q1 to Q3: A, A, A (2026-11-14); issue #4 for data recovery.
 - [ ] F1: hosted mode in the fork.
-- [ ] Work item 2: solution, manifest, compilation from the fork, iframe page, window.
+- [x] Work item 2: solution, manifest, compilation from the fork, iframe page, window (2026-11-14;
+  the test that waits for `ready` waits for F1, then the submodule moves to `kazo/base`).
+
+### Work item 2: measures (2026-11-14)
+
+Container of the session (4 cores, Linux, no graphics card: WebGL 2 and WebGPU by SwiftShader).
+VectorCraft compiled from `kazo/v0.24.1` (`f4922aa7`), the upstream release with no change.
+
+| Point | Result |
+| --- | --- |
+| Build | `tools/build-vectorcraft.sh` settings (`opt-level = "s"`, thin LTO, one codegen unit, `strip = "debuginfo"`): 11 min 55 s cold. With `strip = "debuginfo"` Trunk's `wasm-opt` takes the file as is (the `strip = true` trap of the step 0 trial does not occur). |
+| `.wasm` | **71,830,257 bytes (68.5 MiB)**, 30 % under the official build, 25 % under GitHub's 100 MiB limit; the script refuses anything above 90 MiB. Glue 183,703 bytes. `wwwroot/vectorcraft` holds 71 MB with the three served fonts and the licences. |
+| `.kazoapp` package | **30,448,921 bytes (29.0 MiB)**, under the 64 MiB Kazo OS limit. |
+| Install | `kazopkg install` in the published Kazo OS 3.3.4 (`npm run test:installed`): OK. |
+| Start, WebGL 2 | first window 10.7 s (download and compilation of the `.wasm` included), second 1.9 s. |
+| Start, WebGPU | first window 10.2 s, second 0.8 s (`RENDERER=webgpu`). |
+| Memory (Chromium renderers) | WebGL 2: 1,365 MiB OS alone, 1,980 with one window (+615), 2,070 with two (+90). WebGPU: 1,372, 2,053 (+681), 2,198 (+145). |
+| Two windows | Two VectorCraft run together, each in its iframe (end-to-end run). |
+| Drawing speed | SVG of 20,000 filled and stroked curves, WebGL 2, two rounds, size build vs the official `vectorcraft-web-0.24.1.zip`: start 0.6–0.7 s vs 0.7–0.8 s; open 1.8–2.3 s vs 1.8–1.9 s; zoom in or out with the painted frame 730–820 ms vs 620–770 ms; select all 1.7 s vs 2.2–2.3 s; move the 20,000 objects 11.8–12.3 s vs 10.9–14.3 s. The difference stays within the noise of software rendering except zooming, about 10 % slower: not a reason to change the setting. To redo on a real graphics card. |
+| Served fonts | VectorCraft fetches `fonts/<hash>/…` relative to its page: the iframe page carries `<base href="../vectorcraft/">` so they come from the build's folder (the other addresses of the page stay the same). |
+
+Without F1 the window stays on its loading screen (VectorCraft never says `ready`) and shows the
+error screen after the module's timeout; VectorCraft itself runs in the hidden iframe.
 - [ ] Work item 3: window, bound open and save, tabs, exports, close guard.
 - [ ] Work item 4: Store listing, README, third-party notices, run in the released OS.
 - [ ] Release: `vector/base` into `main` (Benoit), tag `v0.1.0`, catalog, `features.md`.
