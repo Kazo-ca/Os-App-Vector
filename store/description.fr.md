@@ -59,7 +59,6 @@ une app d'illustration vectorielle libre écrite en Rust, qui tourne ici dans un
   montre un écran d'erreur au lieu du dessin.
 - Le téléchargement fait environ 30 Mo (environ 72 Mo une fois installé), et chaque fenêtre charge
   sa propre copie de VectorCraft.
-- Demande Kazo OS 3.3.4 ou plus récent.
 
 ## Licence
 
