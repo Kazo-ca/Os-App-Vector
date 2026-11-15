@@ -57,7 +57,6 @@ open-source vector illustration app written in Rust, running here in a Kazo OS w
   instead of the drawing.
 - The download is about 30 MB (about 72 MB once installed), and each window loads its own copy of
   VectorCraft.
-- Requires Kazo OS 3.3.4 or later.
 
 ## License
 
