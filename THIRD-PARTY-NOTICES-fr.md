@@ -15,8 +15,8 @@ polices qu'il intègre ou sert.
 | | |
 | --- | --- |
 | Œuvre | [VectorCraft](https://github.com/storytold/vectorcraft), une app d'illustration vectorielle écrite en Rust, de l'équipe ArtCraft et des contributeurs de VectorCraft |
-| Version | 0.24.1, compilée depuis notre fork [`Kazo-ca/vectorcraft`](https://github.com/Kazo-ca/vectorcraft), branche `kazo/base`, commit `326de0f44b3bf6cda2198b2fd6321cc0b2c7550b` |
-| Changements | **Modifiée.** Le fork ajoute un mode hébergé au build web (ouvrir et enregistrer par la page hôte, `id`, `path` et `active` dans `ui.inspect`, liens ArtCraft et récupération de données coupés en mode hébergé), sur l'étiquette amont `v0.24.1` (commit `f4922aa7ac99a4f6d56fc68a83a44945207ec610`). Chaque changement est un commit du fork, sous la licence de VectorCraft |
+| Version | 0.25.0, compilée depuis notre fork [`Kazo-ca/vectorcraft`](https://github.com/Kazo-ca/vectorcraft), branche `kazo/base-v0.25.0`, commit `30f2170ad3660abbb497dadfb46d60348034df0c` |
+| Changements | **Modifiée.** Le fork ajoute un mode hébergé au build web (ouvrir et enregistrer par la page hôte, `id`, `path` et `active` dans `ui.inspect`, liens ArtCraft et récupération de données coupés en mode hébergé), sur la version amont `v0.25.0` (branche `release`, commit `b2dd3496ad198c2c7f968adae68aca8e6456e4f7`, sans étiquette amont ; gardé dans le fork comme `kazo/v0.25.0`). Chaque changement est un commit du fork, sous la licence de VectorCraft |
 | Polices | intégrées ou servies à la compilation depuis [`storytold/craft-fonts`](https://github.com/storytold/craft-fonts) au commit `b076417b5880bd4154bd22f00695b1d28c6bea83`, comme les versions publiées de VectorCraft |
 | Licence | MIT ou Apache-2.0, au choix de l'utilisateur |
 | Fichiers | `src/Kazo.Vector/wwwroot/vectorcraft/` (le build web : `.js`, `.wasm`, `snippets/`, `fonts/`) |

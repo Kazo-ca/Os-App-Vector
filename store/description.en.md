@@ -49,7 +49,7 @@ open-source vector illustration app written in Rust, running here in a Kazo OS w
   VectorCraft and lose the open drawings.
 - VectorCraft draws with WebGPU or WebGL 2: a browser or computer with neither shows an error screen
   instead of the drawing.
-- The download is about 30 MB (about 72 MB once installed), and each window loads its own copy of
+- The download is about 33 MB (about 80 MB once installed), and each window loads its own copy of
   VectorCraft.
 
 ## License

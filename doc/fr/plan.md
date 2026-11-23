@@ -318,6 +318,12 @@ la session pour l'API de GitHub) ; Benoit regarde avant de publier.
   voir plus bas. L'installation depuis le Store lui-même se vérifie après la sortie
   (`npm run test:installed -- --store <wwwroot>`).
 - [ ] Sortie : `vector/base` dans `main` (Benoit), étiquette `v0.1.0`, catalogue, `features.md`.
+- [x] VectorCraft 0.25.0 (2026-11-23, app 0.2.0) : commit `b2dd3496` de la branche amont `release`
+  (pas encore d'étiquette amont), gardé dans le fork comme `kazo/v0.25.0` ; le mode hébergé (F1)
+  rebasé dessus en `kazo/base-v0.25.0` (`30f2170a` ; `kazo/base` reste sur la 0.24.1). `.wasm` de
+  80 059 291 octets. Le wasm-opt de Binaryen plante sur plusieurs cœurs avec ce build :
+  `tools/build-vectorcraft.sh` le lance sur un seul (`BINARYEN_CORES=1`). Nouveau en amont :
+  interface en gujarati (pas affichée par le build web, qui n'a pas de police gujarati).
 
 ### Chantier 2 : mesures (2026-11-14)
 

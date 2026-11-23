@@ -310,6 +310,12 @@ session's reach for the GitHub API); Benoit looks before publishing.
   see below. Installing from the Store itself is checked after the release
   (`npm run test:installed -- --store <wwwroot>`).
 - [ ] Release: `vector/base` into `main` (Benoit), tag `v0.1.0`, catalog, `features.md`.
+- [x] VectorCraft 0.25.0 (2026-11-23, app 0.2.0): upstream `release` commit `b2dd3496` (no upstream
+  tag yet), kept in the fork as `kazo/v0.25.0`; the host mode (F1) rebased on it as
+  `kazo/base-v0.25.0` (`30f2170a`; `kazo/base` stays on 0.24.1). `.wasm` 80,059,291 bytes. Binaryen's
+  wasm-opt crashes on several cores with this build: `tools/build-vectorcraft.sh` runs it on one
+  (`BINARYEN_CORES=1`). New upstream: Gujarati interface (not shown on the web build, which has
+  no Gujarati face).
 
 ### Work item 2: measures (2026-11-14)
 

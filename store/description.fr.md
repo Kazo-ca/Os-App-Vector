@@ -57,7 +57,7 @@ une app d'illustration vectorielle libre écrite en Rust, qui tourne ici dans un
   VectorCraft et perdrait les dessins ouverts.
 - VectorCraft dessine avec WebGPU ou WebGL 2 : un navigateur ou un ordinateur sans l'un ni l'autre
   montre un écran d'erreur au lieu du dessin.
-- Le téléchargement fait environ 30 Mo (environ 72 Mo une fois installé), et chaque fenêtre charge
+- Le téléchargement fait environ 33 Mo (environ 80 Mo une fois installé), et chaque fenêtre charge
   sa propre copie de VectorCraft.
 
 ## Licence

@@ -56,7 +56,7 @@ public sealed partial class VectorCraftBuildTests
     [Fact]
     public void The_wasm_stays_under_the_Kazo_OS_file_size_limit()
     {
-        // ADR 0245 of Kazo OS: 128 MiB per file. VectorCraft 0.24.1 is about 68 MiB built for size.
+        // ADR 0245 of Kazo OS: 128 MiB per file. VectorCraft 0.25.0 is about 76 MiB built for size.
         const long maximumFileBytes = 128L * 1024 * 1024;
         FileInfo wasm = new(Path.Combine(BuildFolder, Provenance.GetProperty("wasm").GetString()!));
         Assert.InRange(wasm.Length, 1, maximumFileBytes);
