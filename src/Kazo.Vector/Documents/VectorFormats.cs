@@ -59,7 +59,7 @@ public static class VectorFormats
     public static IReadOnlyList<FileHandler> FileHandlers => Formats.FileHandlers;
 
     /// <summary>
-    /// The files VectorCraft 0.24.1 opens without creating a drawing (<c>io::opens_as</c> in
+    /// The files VectorCraft 0.25.0 opens without creating a drawing (<c>io::opens_as</c> in
     /// <c>crates/ui-egui/src/io/open.rs</c>): swatch libraries, Libraries panel libraries, graphic
     /// styles, flattener, PDF, print, perspective grid and export presets, composite fonts, shortcut
     /// sets, scripts and plug-ins.

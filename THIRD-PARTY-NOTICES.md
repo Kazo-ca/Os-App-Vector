@@ -15,8 +15,8 @@ fonts it embeds or serves.
 | | |
 | --- | --- |
 | Work | [VectorCraft](https://github.com/storytold/vectorcraft), a vector illustration app written in Rust, by the ArtCraft team and the VectorCraft contributors |
-| Version | 0.24.1, compiled from our fork [`Kazo-ca/vectorcraft`](https://github.com/Kazo-ca/vectorcraft), branch `kazo/base`, commit `326de0f44b3bf6cda2198b2fd6321cc0b2c7550b` |
-| Changes | **Modified.** The fork adds a host mode to the web build (open and save through the host page, `id`, `path` and `active` in `ui.inspect`, ArtCraft links and data recovery off in host mode), on top of the upstream tag `v0.24.1` (commit `f4922aa7ac99a4f6d56fc68a83a44945207ec610`). Each change is a commit of the fork, under VectorCraft's own license |
+| Version | 0.25.0, compiled from our fork [`Kazo-ca/vectorcraft`](https://github.com/Kazo-ca/vectorcraft), branch `kazo/base-v0.25.0`, commit `30f2170ad3660abbb497dadfb46d60348034df0c` |
+| Changes | **Modified.** The fork adds a host mode to the web build (open and save through the host page, `id`, `path` and `active` in `ui.inspect`, ArtCraft links and data recovery off in host mode), on top of the upstream release `v0.25.0` (branch `release`, commit `b2dd3496ad198c2c7f968adae68aca8e6456e4f7`, not tagged upstream; kept in the fork as `kazo/v0.25.0`). Each change is a commit of the fork, under VectorCraft's own license |
 | Fonts | embedded or served at build time from [`storytold/craft-fonts`](https://github.com/storytold/craft-fonts) at commit `b076417b5880bd4154bd22f00695b1d28c6bea83`, as VectorCraft's own releases do |
 | License | MIT or Apache-2.0, at the user's option |
 | Files | `src/Kazo.Vector/wwwroot/vectorcraft/` (the web build: `.js`, `.wasm`, `snippets/`, `fonts/`) |

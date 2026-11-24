@@ -33,15 +33,15 @@ public sealed class HostingTests
     [InlineData("bs-BA", "bs")]
     [InlineData("en-US", "en")]
     [InlineData("ar-SA", "en")]
-    public void VectorCraft_gets_one_of_its_27_languages_or_English(string culture, string expected)
+    public void VectorCraft_gets_one_of_its_28_languages_or_English(string culture, string expected)
     {
         Assert.Equal(expected, VectorCraftLanguage.Of(CultureInfo.GetCultureInfo(culture)));
     }
 
     [Fact]
-    public void VectorCraft_has_27_languages_besides_English()
+    public void VectorCraft_has_28_languages_besides_English()
     {
-        Assert.Equal(27, VectorCraftLanguage.Available.Count);
+        Assert.Equal(28, VectorCraftLanguage.Available.Count);
         Assert.Equal(VectorCraftLanguage.Available.Count, VectorCraftLanguage.Available.Distinct().Count());
         Assert.DoesNotContain(CraftLanguage.English, VectorCraftLanguage.Available);
     }

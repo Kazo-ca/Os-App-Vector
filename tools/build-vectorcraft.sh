@@ -76,6 +76,9 @@ echo "Building VectorCraft $commit (rustc: $rustc_version, trunk $actual_trunk, 
   export CRAFT_FONTS_DIR="$fonts" CRAFT_FONTS_REQUIRED=1
   export CARGO_PROFILE_RELEASE_OPT_LEVEL=s CARGO_PROFILE_RELEASE_LTO=thin CARGO_PROFILE_RELEASE_CODEGEN_UNITS=1
   export CARGO_PROFILE_RELEASE_STRIP=debuginfo
+  # wasm-opt (Binaryen version_123, Trunk's) crashes with SIGSEGV in a worker thread on
+  # VectorCraft 0.25.0's .wasm when it runs on several cores; on one core it finishes (about 8 min).
+  export BINARYEN_CORES="${BINARYEN_CORES:-1}"
   export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$vectorcraft/target}"
   cd "$vectorcraft/apps/vectorcraft-web"
   trunk build --release --dist "$work/site"
